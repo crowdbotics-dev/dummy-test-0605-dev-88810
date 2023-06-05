@@ -83,6 +83,12 @@ const imageLoaderConfiguration = {
   }
 }
 
+const fontLoaderConfiguration = {
+  test: /\.ttf$/,
+  loader: "url-loader", // or directly file-loader
+  include: path.resolve(__dirname, "node_modules/react-native-vector-icons"),
+};
+
 module.exports = {
   entry: [
     // load any web API polyfills
@@ -101,7 +107,7 @@ module.exports = {
   // ...the rest of your config
 
   module: {
-    rules: [babelLoaderConfiguration, imageLoaderConfiguration]
+    rules: [babelLoaderConfiguration, imageLoaderConfiguration, fontLoaderConfiguration]
   },
   plugins: [HTMLWebpackPluginConfig],
   resolve: {

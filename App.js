@@ -12,6 +12,30 @@ import {
 import { screens } from "@screens"
 import { modules, reducers, hooks, initialRoute } from "@modules"
 import { connectors } from "@store"
+import { Platform } from "react-native"
+import iconFont from "react-native-vector-icons/Fonts/FontAwesome.ttf"
+
+// todo: do this better in the actual app code
+if (Platform.OS === "web") {
+  // Generate required css
+  
+  const iconFontStyles = `@font-face {
+  src: url(${iconFont});
+  font-family: FontAwesome;
+}`
+
+  // Create stylesheet
+  const style = document.createElement("style")
+  style.type = "text/css"
+  if (style.styleSheet) {
+    style.styleSheet.cssText = iconFontStyles
+  } else {
+    style.appendChild(document.createTextNode(iconFontStyles))
+  }
+
+  // Inject stylesheet
+  document.head.appendChild(style)
+}
 
 const Stack = createStackNavigator()
 
