@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/native";
 import { StyleSheet, Pressable } from "react-native";
-import "react";
+import React from "react";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { Text, View } from "react-native";
 
