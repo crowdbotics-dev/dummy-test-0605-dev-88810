@@ -1,110 +1,92 @@
-import React, { useContext } from "react"
-import { Provider } from "react-redux"
-import "react-native-gesture-handler"
-import { NavigationContainer } from "@react-navigation/native"
-import { createStackNavigator } from "@react-navigation/stack"
-import {
-  configureStore,
-  createReducer,
-  combineReducers
-} from "@reduxjs/toolkit"
+import React, { useContext } from "react";
+import { Provider } from "react-redux";
+import "react-native-gesture-handler";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { configureStore, createReducer, combineReducers } from "@reduxjs/toolkit";
+import { screens } from "@screens";
+import { modules, reducers, hooks, initialRoute } from "@modules";
+import { connectors } from "@store";
+import { Platform } from "react-native";
+import iconFont from "react-native-vector-icons/Fonts/FontAwesome.ttf"; // todo: do this better in the actual app code
 
-import { screens } from "@screens"
-import { modules, reducers, hooks, initialRoute } from "@modules"
-import { connectors } from "@store"
-import { Platform } from "react-native"
-import iconFont from "react-native-vector-icons/Fonts/FontAwesome.ttf"
-
-// todo: do this better in the actual app code
 if (Platform.OS === "web") {
   // Generate required css
-  
   const iconFontStyles = `@font-face {
   src: url(${iconFont});
   font-family: FontAwesome;
-}`
+}`; // Create stylesheet
 
-  // Create stylesheet
-  const style = document.createElement("style")
-  style.type = "text/css"
+  const style = document.createElement("style");
+  style.type = "text/css";
+
   if (style.styleSheet) {
-    style.styleSheet.cssText = iconFontStyles
+    style.styleSheet.cssText = iconFontStyles;
   } else {
-    style.appendChild(document.createTextNode(iconFontStyles))
-  }
+    style.appendChild(document.createTextNode(iconFontStyles));
+  } // Inject stylesheet
 
-  // Inject stylesheet
-  document.head.appendChild(style)
+
+  document.head.appendChild(style);
 }
 
-const Stack = createStackNavigator()
-
-import { GlobalOptionsContext, OptionsContext, getOptions } from "@options"
+const Stack = createStackNavigator();
+import { GlobalOptionsContext, OptionsContext, getOptions } from "@options";
 
 const getNavigation = (modules, screens, initialRoute) => {
   const Navigation = () => {
     const routes = modules.concat(screens).map(mod => {
-      const pakage = mod.package
-      const name = mod.value.title
-      const Navigator = mod.value.navigator
+      const pakage = mod.package;
+      const name = mod.value.title;
+      const Navigator = mod.value.navigator;
+
       const Component = props => {
-        return (
-          <OptionsContext.Provider value={getOptions(pakage)}>
+        return <OptionsContext.Provider value={getOptions(pakage)}>
             <Navigator {...props} />
-          </OptionsContext.Provider>
-        )
-      }
-      return <Stack.Screen key={name} name={name} component={Component} />
-    })
+          </OptionsContext.Provider>;
+      };
 
-    const screenOptions = { headerShown: false }
-
-    return (
-      <NavigationContainer>
-        <Stack.Navigator
-          initialRouteName={initialRoute}
-          screenOptions={screenOptions}
-        >
+      return <Stack.Screen key={name} name={name} component={Component} />;
+    });
+    const screenOptions = {
+      headerShown: false
+    };
+    return <NavigationContainer>
+        <Stack.Navigator initialRouteName={initialRoute} screenOptions={screenOptions}>
           {routes}
         </Stack.Navigator>
-      </NavigationContainer>
-    )
-  }
-  return Navigation
-}
+      </NavigationContainer>;
+  };
+
+  return Navigation;
+};
 
 const getStore = globalState => {
   const appReducer = createReducer(globalState, _ => {
-    return globalState
-  })
-
+    return globalState;
+  });
   const reducer = combineReducers({
     app: appReducer,
     ...reducers,
     ...connectors
-  })
-
+  });
   return configureStore({
     reducer: reducer,
     middleware: getDefaultMiddleware => getDefaultMiddleware()
-  })
-}
+  });
+};
 
 const App = () => {
-  const global = useContext(GlobalOptionsContext)
-  const Navigation = getNavigation(modules, screens, initialRoute)
-  const store = getStore(global)
-
-  let effects = {}
+  const global = useContext(GlobalOptionsContext);
+  const Navigation = getNavigation(modules, screens, initialRoute);
+  const store = getStore(global);
+  let effects = {};
   hooks.map(hook => {
-    effects[hook.name] = hook.value()
-  })
-
-  return (
-    <Provider store={store}>
+    effects[hook.name] = hook.value();
+  });
+  return <Provider store={store}>
       <Navigation />
-    </Provider>
-  )
-}
+    </Provider>;
+};
 
-export default App
+export default App;
