@@ -13,5 +13,10 @@ module.exports = {
       }
     ],
     "import-glob-meta"
-  ]
+  ],
+  env: {
+    production: {
+      plugins: ["react-native-paper/babel"]
+    }
+  }
 }

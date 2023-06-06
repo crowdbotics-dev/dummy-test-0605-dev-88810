@@ -9,7 +9,7 @@ import { modules, reducers, hooks, initialRoute } from "@modules";
 import { connectors } from "@store";
 import { Platform } from "react-native";
 import iconFont from "react-native-vector-icons/Fonts/FontAwesome.ttf"; // todo: do this better in the actual app code
-
+import { Provider as PaperProvider } from 'react-native-paper';
 if (Platform.OS === "web") {
   // Generate required css
   const iconFontStyles = `@font-face {
@@ -85,7 +85,9 @@ const App = () => {
     effects[hook.name] = hook.value();
   });
   return <Provider store={store}>
-      <Navigation />
+      <PaperProvider>
+        <Navigation />
+      </PaperProvider>
     </Provider>;
 };
 
